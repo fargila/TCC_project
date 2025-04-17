@@ -7,8 +7,9 @@ const Purchase = () => {
 
     const [ufs, setUfs] = useState('')
     return (
-        <div className='h-auto flex justify-center'>
+        <div className='h-auto flex justify-center mt-28 mb-72'>
             <form  className='h-screen w-3/5 items-center' action="">
+                <h1 className='my-10 text-4xl font-bold'>Finalizar Compra</h1>
                 <div className='grid grid-cols-6 gap-2 p-4 bg-gray-300 h-3/6 my-6 rounded-xl 
                 border-b-4 border-gray-500 ring-1 ring-black'>
                     <input className='h-10 rounded-3xl pl-2 col-span-5 border-2 border-gray-600' 
@@ -30,8 +31,8 @@ const Purchase = () => {
                         ))    
                     }</select>
                 </div>
-                <div className='h-48 ring-1 ring-black rounded-t-xl'>
-                    <div className='z-10 flex bg-gray-400 justify-center h-3/5 rounded-t-xl items-center shadow-2xl relative'>
+                <div className='h-auto ring-1 ring-black rounded-t-xl'>
+                    <div className='py-4 z-10 flex bg-gray-400 justify-center h-3/5 rounded-t-xl items-center shadow-2xl relative'>
                         <button className='px-2 m-2 border rounded-2xl h-14 w-3/12
                         flex justify-center items-center'><FaCreditCard className='flex justify-center max-h-full w-1/4'/>Cartão de crédito</button>
                         <button className='px-2 m-2 border rounded-2xl h-14 w-3/12
@@ -39,8 +40,24 @@ const Purchase = () => {
                         <button className='px-2 m-2 border rounded-2xl h-14 w-2/12
                         flex justify-center items-center'><FaPix className='flex justify-center max-h-full w-1/4'/>PIX</button>
                     </div>
-                    <div className='z-0 flex bg-gray-500 justify-center h-2/5  border-b-4 border-gray-700 text-2xl font-semibold'>
-                        <button className='w-full h-auto' type='submit'>Finalizar compra</button>
+                    <div className='z-0'>
+                        <div className='flex justify-center flex-col items-center bg-gray-400 py-2'>
+                            <div className='flex w-3/5 justify-between text-2xl font-medium'>
+                                <p>Compras:</p>
+                                <p>R$xx.xx</p>
+                            </div>
+                            <div className='flex w-3/5 justify-between text-2xl font-medium my-4'>
+                                <p>Frete:</p>
+                                <p>R$yy.yy</p>
+                            </div>
+                            <div className='flex w-3/5 justify-between text-3xl font-semibold'>
+                                <p>Total:</p>
+                                <p>R$zz.zz</p>
+                            </div>
+                        </div>
+                        <div className='h-16 flex bg-gray-500 justify-center border-b-4 border-gray-700 text-2xl font-semibold'>
+                            <button className='w-full h-auto' type='submit'>Finalizar compra</button>
+                        </div>
                     </div>
                 </div>
             </form>
