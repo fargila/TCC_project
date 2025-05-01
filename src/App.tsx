@@ -1,17 +1,21 @@
 import Header from './components/Header'
 import Catalog from './pages/Catalog'
-// import Purchase from './pages/Purchase'
+import Purchase from './pages/Purchase'
 import Footer from './components/Footer'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
 
   return (
-    <>
-      <Header/>
-      <Catalog/>
-      {/* <Purchase/> */}
-      <Footer/>
-    </>
+    <BrowserRouter>
+    <Header />
+    <Routes>
+      <Route path="/" element={<Catalog />} /> 
+      <Route path="/catalog" element={<Catalog />} />
+      <Route path="/purchase" element={<Purchase />} />
+    </Routes>
+    <Footer />
+  </BrowserRouter>
   )
 }
 
