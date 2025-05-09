@@ -6,7 +6,7 @@ function Footer() {
   return (
     <footer className='flex flex-col justify-center h-auto bottom-0 mb-4'>
       <div className='w-full bg-black text-white py-8 flex justify-between
-      border-t-4 border-gray-400 ring-2 ring-black'>
+      border-t-4 border-gray-700 ring-2 ring-black'>
         <div className='flex pl-10 text-xl items-center'><MdSecurity/><p className='
         pl-2 font-medium'>100% inseguro</p></div>
         <div className='flex  text-xl items-center'><FaPlane/><p className='

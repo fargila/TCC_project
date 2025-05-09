@@ -1,41 +1,154 @@
-import { FaThList, FaShoppingCart, FaStar, FaSearch } from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { FaShoppingCart, FaStar, FaSearch, FaArrowLeft } from 'react-icons/fa';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Cart from './Cart';
+import Wishlist from './WishList';
 
-function Header() {
-  return (
-    <header className='z-50 flex justify-end h-32 text-2xl rounded-b-3xl
-    border-b-4 border-blue-300 ring-2 ring-black fixed w-full top-0 flex flex-col text-lg'>
-      <div className="w-full flex justify-end bg-gray-700 h-1/3 text-gray-200 items-center
-      pr-20">
-        <button className="mr-10"><p>Logar</p></button>
-        <button className="mr-10"><p>Minha conta</p></button>
-        <button className="mr-10"><p>Minha conta</p></button>
-        <button className="mr-10"><p>Ajuda</p></button>
-      </div>
-      <div className="rounded-b-3xl bg-white w-full h-2/3 flex justify-between px-20 items-center">
-        <div className="flex h-1/2 w-1/2">
-          <input className="w-3/4 border border-black rounded-l-xl" type="text" />
-          <button className="flex items-center px-2 w-1/12 border border-black rounded-r-xl
-          bg-gray-800 text-white justify-center"><FaSearch/></button>
-        </div>
-        <div className="flex items-center">
-          <div className="flex flex-col items-center">
-            <div><button className="flex items-center"><FaShoppingCart
-            className="mr-2"/><p>Carrinho</p></button></div>
-            <Link className=" bg-gray-800 text-white rounded-lg py-1 px-10" to="/purchase">
-            Comprar</Link>
-          </div>
-          <div className="w-px bg-gray-400 mx-10 h-16"></div>
-          <div className="">
-            <Link to="/catalog" className="flex flex-col justify-center items-center">
-              <FaStar className="border rounded-full border-black"/>
-              <p>Lista de desejos</p>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </header>
-  )
+interface Book {
+  title: string;
+  author_name?: string[];
+  cover_i?: number;
+  isbn?: string[];
+  price: string;
+  first_publish_year?: number;
+  publisher?: string[];
+  description?: string | { value?: string };
+  coverUrl?: string;
 }
 
-export default Header
+interface HeaderProps {
+  cartCount: number;
+  wishlistCount: number;
+  cartItems: Book[];
+  wishlistItems: Book[];
+  onAddToCart: (book: Book) => void;
+  onToggleWishlist: (book: Book) => void;
+}
+
+const Header: React.FC<HeaderProps> = ({
+  cartCount,
+  wishlistCount,
+  cartItems,
+  wishlistItems,
+  onAddToCart,
+  onToggleWishlist,
+}) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isPurchasePage = location.pathname === '/purchase';
+
+  const [showCart, setShowCart] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
+
+  const handleCartClick = () => {
+    setShowWishlist(false); // close Wishlist if open
+    setShowCart((prev) => !prev); // toggle Cart overlay
+  };
+
+  const handleWishlistClick = () => {
+    setShowCart(false); // close Cart if open
+    setShowWishlist((prev) => !prev); // toggle Wishlist overlay
+  };
+
+  const handleCloseOverlay = () => {
+    setShowCart(false);
+    setShowWishlist(false);
+  };
+
+  return (
+    <>
+      <header className="z-50 flex justify-end h-32 text-2xl rounded-b-3xl border-b-4 border-blue-300 ring-2 ring-black fixed w-full top-0 flex-col text-lg bg-white">
+        <div className="flex justify-between w-full bg-gray-700 h-1/3 text-gray-200 items-center">
+          <div className="flex justify-start ml-4"><p>React Edition</p></div>
+          <div className="flex justify-end mt-1">
+            <button className="mr-10"><p>Logar</p></button>
+            <button className="mr-10"><p>Minha conta</p></button>
+            <button className="mr-10"><p>Configurações</p></button>
+            <button className="mr-10"><p>Ajuda</p></button>
+          </div>
+        </div>
+
+        <div className="rounded-b-3xl w-full h-2/3 flex justify-between px-20 items-center">
+          {isPurchasePage ? (
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <FaArrowLeft size={20} />
+              <span className="text-lg">Voltar ao Catálogo</span>
+            </button>
+          ) : (
+            <div className="flex h-1/2 w-1/2">
+              <input
+                className="w-3/4 border border-black rounded-l-xl pl-4"
+                type="text"
+                placeholder="Pesquisar livros..."
+              />
+              <button className="flex items-center px-2 w-1/12 border border-black rounded-r-xl bg-gray-800 text-white justify-center">
+                <FaSearch />
+              </button>
+            </div>
+          )}
+
+          <div className="flex items-center gap-10">
+            <button
+              onClick={handleCartClick}
+              className="flex items-center gap-2 hover:text-blue-600 transition-colors"
+            >
+              <div className="relative">
+                <FaShoppingCart size={24} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+              <span>Carrinho</span>
+            </button>
+
+            {!isPurchasePage && (
+              <Link
+                className="bg-gray-800 text-white rounded-lg py-2 px-6 hover:bg-gray-700 transition-colors"
+                to="/purchase"
+              >
+                Comprar
+              </Link>
+            )}
+
+            <div className="w-px bg-gray-400 h-16"></div>
+
+            <button
+              onClick={handleWishlistClick}
+              className="flex flex-col items-center hover:text-red-500 transition-colors"
+            >
+              <div className="relative">
+                <FaStar size={24} className="text-yellow-500" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
+              </div>
+              <span className="text-sm">Desejos</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Overlays */}
+      {showCart && (
+        <div>
+          <Cart cartItems={cartItems} onClose={handleCloseOverlay} />
+        </div>
+      )}
+
+      {showWishlist && (
+        <div>
+          <Wishlist wishlistItems={wishlistItems} onClose={handleCloseOverlay} />
+        </div>
+      )}
+    </>
+  );
+};
+
+export default Header;
