@@ -1,58 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaShoppingCart, FaStar, FaSearch, FaArrowLeft } from 'react-icons/fa';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import Cart from './Cart';
-import Wishlist from './WishList';
-
-interface Book {
-  title: string;
-  author_name?: string[];
-  cover_i?: number;
-  isbn?: string[];
-  price: string;
-  first_publish_year?: number;
-  publisher?: string[];
-  description?: string | { value?: string };
-  coverUrl?: string;
-}
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   cartCount: number;
   wishlistCount: number;
-  cartItems: Book[];
-  wishlistItems: Book[];
-  onAddToCart: (book: Book) => void;
-  onToggleWishlist: (book: Book) => void;
+  setModalContent: React.Dispatch<React.SetStateAction<'cart' | 'wishlist' | null>>;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   cartCount,
   wishlistCount,
-  cartItems,
-  wishlistItems,
-  onAddToCart,
-  onToggleWishlist,
+  setModalContent,
+  searchQuery, 
+  onSearchChange,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isPurchasePage = location.pathname === '/purchase';
 
-  const [showCart, setShowCart] = useState(false);
-  const [showWishlist, setShowWishlist] = useState(false);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onSearchChange(e.target.value); // Update search query
+  };
 
   const handleCartClick = () => {
-    setShowWishlist(false); // close Wishlist if open
-    setShowCart((prev) => !prev); // toggle Cart overlay
+    setModalContent('cart');
   };
 
   const handleWishlistClick = () => {
-    setShowCart(false); // close Cart if open
-    setShowWishlist((prev) => !prev); // toggle Wishlist overlay
-  };
-
-  const handleCloseOverlay = () => {
-    setShowCart(false);
-    setShowWishlist(false);
+    setModalContent('wishlist');
   };
 
   return (
@@ -83,6 +61,8 @@ const Header: React.FC<HeaderProps> = ({
                 className="w-3/4 border border-black rounded-l-xl pl-4"
                 type="text"
                 placeholder="Pesquisar livros..."
+                onChange={handleInputChange}
+                 value={searchQuery}
               />
               <button className="flex items-center px-2 w-1/12 border border-black rounded-r-xl bg-gray-800 text-white justify-center">
                 <FaSearch />
@@ -92,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({
 
           <div className="flex items-center gap-10">
             <button
-              onClick={handleCartClick}
+              onClick={handleCartClick} 
               className="flex items-center gap-2 hover:text-blue-600 transition-colors"
             >
               <div className="relative">
@@ -106,23 +86,14 @@ const Header: React.FC<HeaderProps> = ({
               <span>Carrinho</span>
             </button>
 
-            {!isPurchasePage && (
-              <Link
-                className="bg-gray-800 text-white rounded-lg py-2 px-6 hover:bg-gray-700 transition-colors"
-                to="/purchase"
-              >
-                Comprar
-              </Link>
-            )}
-
             <div className="w-px bg-gray-400 h-16"></div>
 
             <button
               onClick={handleWishlistClick}
-              className="flex flex-col items-center hover:text-red-500 transition-colors"
+              className="flex flex-col items-center hover:text-blue-800 transition-colors"
             >
               <div className="relative">
-                <FaStar size={24} className="text-yellow-500" />
+                <FaStar size={24} className="text-blue-400" />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {wishlistCount}
@@ -134,19 +105,6 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       </header>
-
-      {/* Overlays */}
-      {showCart && (
-        <div>
-          <Cart cartItems={cartItems} onClose={handleCloseOverlay} />
-        </div>
-      )}
-
-      {showWishlist && (
-        <div>
-          <Wishlist wishlistItems={wishlistItems} onClose={handleCloseOverlay} />
-        </div>
-      )}
     </>
   );
 };

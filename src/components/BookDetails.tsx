@@ -1,20 +1,12 @@
 import React from 'react';
 import { FaTimes, FaHeart, FaRegHeart, FaShoppingCart } from 'react-icons/fa';
+import { Book } from '../types/Book'
 
 interface BookDetailsProps {
-  book: {
-    title: string;
-    author_name?: string[];
-    cover_i?: number;
-    isbn?: string[];
-    price: string;
-    first_publish_year?: number;
-    publisher?: string[];
-    description?: string | { value?: string };
-  };
+  book: Book
   onClose: () => void;
-  onAddToCart: (book: any) => void;
-  onToggleWishlist: (book: any) => void;
+  onAddToCart: (book: Book) => void;
+  onToggleWishlist: (book: Book) => void;
   isInWishlist: boolean;
 }
 
@@ -77,7 +69,12 @@ const BookDetails: React.FC<BookDetailsProps> = ({
           <div className="w-full md:w-2/3">
             <div className="space-y-4">
               <p className="text-xl font-semibold">{book.author_name?.join(', ') || 'Autor Desconhecido'}</p>
-              <p className="text-3xl font-bold text-green-600">{book.price}</p>
+              <p className="text-3xl font-bold text-green-600">
+                {new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL'
+                }).format(book.price)}
+              </p>
               
               {book.first_publish_year && (
                 <p><span className="font-medium">Publicado em:</span> {book.first_publish_year}</p>
@@ -86,11 +83,10 @@ const BookDetails: React.FC<BookDetailsProps> = ({
               <div>
                 <h3 className="text-lg font-semibold border-b border-gray-200 pb-2 mb-2">Enredo</h3>
                 <p className="text-gray-700 mb-6">
-                  {book.description
-                    ? typeof book.description === 'string'
-                      ? book.description
-                      : book.description.value || 'Descrição não disponível'
-                    : 'Descrição não disponível'}
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rutrum nisl a felis pellentesque maximus
+                  et id mauris. Ut vel nunc ipsum. Duis eu egestas leo. Praesent fermentum, erat sed sagittis lobortis, 
+                  augue tortor imperdiet risus, vitae sollicitudin ex nibh quis tellus. Suspendisse potenti. Morbi semper
+                   ac dui eget venenatis. Quisque ac elementum erat.
                 </p>
               </div>
             </div>

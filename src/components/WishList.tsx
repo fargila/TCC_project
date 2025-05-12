@@ -1,16 +1,6 @@
 import React from 'react';
-import { FaTimes, FaHeart, FaShoppingCart } from 'react-icons/fa';
-
-interface Book {
-  title: string;
-  author_name?: string[];
-  cover_i?: number;
-  isbn?: string[];
-  price: string;
-  first_publish_year?: number;
-  publisher?: string[];
-  description?: string | { value?: string };
-}
+import { FaTimes, FaShoppingCart } from 'react-icons/fa';
+import { Book } from '../types/Book'
 
 interface WishlistProps {
   wishlistItems: Book[];
@@ -41,7 +31,7 @@ const Wishlist: React.FC<WishlistProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-2xl font-bold">Wishlist</h2>
+          <h2 className="text-2xl font-bold">Lista de desejos</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-black text-2xl"
@@ -53,7 +43,7 @@ const Wishlist: React.FC<WishlistProps> = ({
 
         {wishlistItems.length === 0 ? (
           <div className="text-center mt-8">
-            <p>Your wishlist is empty.</p>
+            <p>Sua lista de desejos está vazia.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -73,7 +63,12 @@ const Wishlist: React.FC<WishlistProps> = ({
                   <div>
                     <h3 className="text-xl font-semibold">{item.title}</h3>
                     <p className="text-sm text-gray-600">{item.author_name?.join(', ') || 'Autor Desconhecido'}</p>
-                    <p className="font-semibold text-green-600">{item.price}</p>
+                    <p className="font-semibold text-green-600">
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      }).format(item.price)}
+                    </p>
                   </div>
                 </div>
 
@@ -87,9 +82,8 @@ const Wishlist: React.FC<WishlistProps> = ({
                   </button>
                   <button
                     onClick={() => handleRemoveFromWishlist(item)}
-                    className="flex items-center gap-2 text-red-600 hover:text-red-700"
-                  >
-                    <FaHeart />
+                    className="flex items-center gap-1 text-red-600 hover:text-red-700">
+                    <FaTimes />
                     <span>Remover</span>
                   </button>
                 </div>

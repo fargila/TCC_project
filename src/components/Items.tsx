@@ -1,34 +1,26 @@
 import React, { useState } from 'react';
 import BookDetails from './BookDetails';
+import { Book } from '../types/Book'
 
 interface ItemsProps {
   books: Book[];
+  onAddToCart: (book: Book) => void;
+  onToggleWishlist: (book: Book) => void;
+  wishlist?: Book[];
 }
 
-const Items: React.FC<ItemsProps> = ({ books }) => {
-  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  const [wishlist, setWishlist] = useState<Book[]>([]);
-  const [cart, setCart] = useState<Book[]>([]);
+const Items: React.FC<ItemsProps> = ({ books,
+  onAddToCart,
+  onToggleWishlist,
+  wishlist = [],
+  }) => {
+  
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null); 
 
   const getCoverUrl = (book: Book) => {
     return book.isbn?.[0]
       ? `https://covers.openlibrary.org/b/isbn/${book.isbn[0]}-M.jpg`
       : `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`;
-  };
-
-  const handleAddToCart = (book: Book) => {
-    setCart((prevCart) => [...prevCart, book]);
-  };
-
-  const handleToggleWishlist = (book: Book) => {
-    setWishlist((prevWishlist) => {
-      const isInWishlist = prevWishlist.some((item) => item.isbn?.[0] === book.isbn?.[0]);
-      if (isInWishlist) {
-        return prevWishlist.filter((item) => item.isbn?.[0] !== book.isbn?.[0]);
-      } else {
-        return [...prevWishlist, book];
-      }
-    });
   };
 
   return (
@@ -38,7 +30,9 @@ const Items: React.FC<ItemsProps> = ({ books }) => {
           <div
             key={index}
             className="flex flex-col rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => setSelectedBook(book)}
+            onClick={() => { 
+              setSelectedBook(book);
+            }}
           >
             <div className="relative pt-[150%] bg-gray-100">
               <img
@@ -50,19 +44,28 @@ const Items: React.FC<ItemsProps> = ({ books }) => {
             <div className="p-3 flex-grow">
               <h3 className="font-medium text-sm line-clamp-2 hover:text-blue-500">{book.title}</h3>
               <p className="text-xs text-gray-500 mt-1 line-clamp-1">{book.author_name?.[0] || 'Unknown Author'}</p>
-              <p className="text-sm font-bold text-green-600 mt-2">{book.price}</p>
+              <p className="text-sm font-bold text-green-600 mt-2">
+                {new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL'
+                }).format(book.price)}
+              </p>
             </div>
           </div>
         ))}
       </div>
-
+      
       {selectedBook && (
         <BookDetails
           book={selectedBook}
-          onClose={() => setSelectedBook(null)}
-          onAddToCart={handleAddToCart}
-          onToggleWishlist={handleToggleWishlist}
-          isInWishlist={wishlist.some((item) => item.isbn?.[0] === selectedBook.isbn?.[0])}
+          onClose={() => setSelectedBook(null)}  // Close the selected book modal
+          onAddToCart={onAddToCart}
+          onToggleWishlist={onToggleWishlist}
+          isInWishlist={
+          selectedBook && selectedBook.isbn
+            ? wishlist.some(item => item.isbn?.[0] === selectedBook.isbn?.[0])
+            : false
+          }
         />
       )}
     </>
