@@ -6,24 +6,16 @@ interface HeaderProps {
   cartCount: number;
   wishlistCount: number;
   setModalContent: React.Dispatch<React.SetStateAction<'cart' | 'wishlist' | null>>;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   cartCount,
   wishlistCount,
   setModalContent,
-  searchQuery, 
-  onSearchChange,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isPurchasePage = location.pathname === '/purchase';
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearchChange(e.target.value); // Update search query
-  };
 
   const handleCartClick = () => {
     setModalContent('cart');
@@ -61,8 +53,6 @@ const Header: React.FC<HeaderProps> = ({
                 className="w-3/4 border border-black rounded-l-xl pl-4"
                 type="text"
                 placeholder="Pesquisar livros..."
-                onChange={handleInputChange}
-                 value={searchQuery}
               />
               <button className="flex items-center px-2 w-1/12 border border-black rounded-r-xl bg-gray-800 text-white justify-center">
                 <FaSearch />
@@ -85,6 +75,7 @@ const Header: React.FC<HeaderProps> = ({
               </div>
               <span>Carrinho</span>
             </button>
+
 
             <div className="w-px bg-gray-400 h-16"></div>
 

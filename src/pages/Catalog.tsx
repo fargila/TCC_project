@@ -94,8 +94,7 @@ export const Catalog: React.FC<CatalogProps> = ({
             <div className="text-center py-10">Loading books...</div>
           ) : (
             <Items
-            
-              books={books.filter(book => book.title.toLowerCase().includes(searchQuery.toLowerCase()))} // Filter books based on search query
+              books={currentBooks}
               onAddToCart={onAddToCart}
               onToggleWishlist={onToggleWishlist}
               wishlist={wishlist}
