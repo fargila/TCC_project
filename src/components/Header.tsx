@@ -31,10 +31,20 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex justify-between w-full bg-gray-700 h-1/3 text-gray-200 items-center">
           <div className="flex justify-start ml-4"><p>React Edition</p></div>
           <div className="flex justify-end mt-1">
-            <button className="mr-10"><p>Logar</p></button>
-            <button className="mr-10"><p>Minha conta</p></button>
-            <button className="mr-10"><p>Configurações</p></button>
-            <button className="mr-10"><p>Ajuda</p></button>
+          
+            <button className="mr-10 text-gray-300 hover:text-white active:text-blue-600 transition duration-200">
+              Logar
+            </button>
+            <button className="mr-10 text-gray-300 hover:text-white active:text-blue-600 transition duration-200">
+              Minha conta
+            </button>
+            <button className="mr-10 text-gray-300 hover:text-white active:text-blue-600 transition duration-200">
+              Configurações
+            </button>
+            <button className="mr-10 text-gray-300 hover:text-white active:text-blue-600 transition duration-200">
+              Ajuda
+            </button>
+
           </div>
         </div>
 
@@ -91,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({
                   </span>
                 )}
               </div>
-              <span className="text-sm">Desejos</span>
+              <span className="text-sm">Lista de Desejos</span>
             </button>
           </div>
         </div>

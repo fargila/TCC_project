@@ -5,27 +5,29 @@ import { Book } from '../types/Book'
 
 interface CatalogProps {
   books: Book[];
-  onAddToCart: (book: Book) => void;
+  onToggleCart: (book: Book) => void; // Changed from onAddToCart
   onToggleWishlist: (book: Book) => void;
   wishlist: Book[];
   loading: boolean;
   onOpenBookDetails: (book: Book) => void;
+  isInCart?: (book: Book) => boolean; // Optional if you want cart status
 }
 
 const ITEMS_PER_PAGE = 20;
 
 export const Catalog: React.FC<CatalogProps> = ({
   books,
-  onAddToCart,
+  onToggleCart, // Changed from onAddToCart
   onToggleWishlist,
   wishlist,
   loading,
   onOpenBookDetails,
+  isInCart // Optional
 }) => {
   const [currentBooks, setCurrentBooks] = useState<Book[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedSideCategory, setSelectedSideCategory] = useState<string | null>(null);
+  const [selectedSideCategories, setSelectedSideCategories] = useState<string[]>([]);
 
   useEffect(() => {
     setTotalPages(Math.ceil(books.length / ITEMS_PER_PAGE));
@@ -38,6 +40,18 @@ export const Catalog: React.FC<CatalogProps> = ({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const toggleSideCategory = (category: string) => {
+    if (category === 'Tudo') {
+      setSelectedSideCategories([]);
+    } else {
+      setSelectedSideCategories(prev =>
+        prev.includes(category)
+          ? prev.filter(c => c !== category)
+          : [...prev.filter(c => c !== 'Tudo'), category]
+      );
+    }
   };
 
   const sideCategories = [
@@ -56,20 +70,25 @@ export const Catalog: React.FC<CatalogProps> = ({
         <div className='border border-black bg-gray-100 w-2/12 flex rounded-r-xl justify-between flex-col'>
           <div className='flex w-full flex-col'>
             <h1 className='text-4xl border-b-2 border-black font-bold pb-4 pl-3 bg-gray-300 rounded-tr-xl'>Categorias</h1>
-            {sideCategories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedSideCategory(category)}
-                className={`pl-7 pb-2 border-b border-black flex justify-start text-left ${
-                  selectedSideCategory === category ? 'bg-gray-400 font-bold' : ''
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+            {sideCategories.map((category) => {
+              const isSelected = selectedSideCategories.includes(category);
+              return (
+                <button
+                  key={category}
+                  onClick={() => toggleSideCategory(category)}
+                  className={`pl-7 pb-2 border-b border-black flex justify-start text-left ${
+                    isSelected ? 'bg-gray-400 font-bold' : ''
+                  }`}
+                >
+                  {category}
+                </button>
+              );
+            })}
           </div>
           <div className='w-full'>
-            <button className='w-full flex justify-center border-t border-black bg-white items-center rounded-br-xl h-20'>
+            <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className='w-full flex justify-center border-t border-black bg-white items-center rounded-br-xl h-20'>
               <FaCaretUp />
             </button>
           </div>
@@ -80,9 +99,9 @@ export const Catalog: React.FC<CatalogProps> = ({
             {gridCategories.map((category) => (
               <button
                 key={category}
-                onClick={() => setSelectedSideCategory(category)} // This should now work
-                className={`pl-7 pb-2 border-b border-black flex justify-start text-left ${
-                  selectedSideCategory === category ? 'bg-gray-400 font-bold' : ''
+                onClick={() => toggleSideCategory(category)}
+                className={`text-center border-b border-black flex justify-center items-center ${
+                  selectedSideCategories.includes(category) ? 'bg-gray-400 font-bold' : ''
                 }`}
               >
                 {category}
@@ -95,10 +114,11 @@ export const Catalog: React.FC<CatalogProps> = ({
           ) : (
             <Items
               books={currentBooks}
-              onAddToCart={onAddToCart}
+              onToggleCart={onToggleCart}
               onToggleWishlist={onToggleWishlist}
-              wishlist={wishlist}
-              onOpenBookDetails={onOpenBookDetails}  // Pass the fction if not used
+              wishlist={wishlist}  // Fixed this line
+              isInCart={isInCart} // This must be provided
+              onOpenBookDetails={onOpenBookDetails}
             />
           )}
 

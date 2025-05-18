@@ -8,5 +8,5 @@ export interface Book {
   publisher?: string[];
   description?: string | { value?: string };
   coverUrl?: string;
-  quantity?: string;
+  quantity?: number;
 }

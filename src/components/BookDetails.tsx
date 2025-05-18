@@ -1,21 +1,23 @@
 import React from 'react';
-import { FaTimes, FaHeart, FaRegHeart, FaShoppingCart } from 'react-icons/fa';
-import { Book } from '../types/Book'
+import { FaTimes, FaHeart, FaRegHeart, FaShoppingCart, FaCheck } from 'react-icons/fa';
+import { Book } from '../types/Book';
 
 interface BookDetailsProps {
-  book: Book
+  book: Book;
   onClose: () => void;
-  onAddToCart: (book: Book) => void;
+  onToggleCart: (book: Book) => void;
   onToggleWishlist: (book: Book) => void;
   isInWishlist: boolean;
+  isInCart: boolean;
 }
 
 const BookDetails: React.FC<BookDetailsProps> = ({ 
   book, 
   onClose,
-  onAddToCart,
+  onToggleCart,
   onToggleWishlist,
-  isInWishlist
+  isInWishlist,
+  isInCart
 }) => {
   const getCoverUrl = (size: 'S' | 'M' | 'L' = 'L') => {
     if (book.isbn?.[0]) {
@@ -27,8 +29,8 @@ const BookDetails: React.FC<BookDetailsProps> = ({
     return '/placeholder-book-cover.png';
   };
 
-  const handleAddToCart = () => {
-    onAddToCart({
+  const handleToggleCart = () => {
+    onToggleCart({
       ...book,
       coverUrl: getCoverUrl('M')
     });
@@ -58,7 +60,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({
               src={getCoverUrl('L')}
               alt={`Capa de ${book.title}`}
               className="w-full h-64 object-contain bg-gray-100 rounded-lg border border-gray-200"
-              onError={(e) => {
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                 const target = e.target as HTMLImageElement;
                 target.src = '/placeholder-book-cover.png';
                 target.classList.add('p-4');
@@ -83,10 +85,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({
               <div>
                 <h3 className="text-lg font-semibold border-b border-gray-200 pb-2 mb-2">Enredo</h3>
                 <p className="text-gray-700 mb-6">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rutrum nisl a felis pellentesque maximus
-                  et id mauris. Ut vel nunc ipsum. Duis eu egestas leo. Praesent fermentum, erat sed sagittis lobortis, 
-                  augue tortor imperdiet risus, vitae sollicitudin ex nibh quis tellus. Suspendisse potenti. Morbi semper
-                   ac dui eget venenatis. Quisque ac elementum erat.
+                  {book.description?.value || 'Descrição não disponível'}
                 </p>
               </div>
             </div>
@@ -97,7 +96,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({
                 aria-label={isInWishlist ? "Remover da lista de desejos" : "Adicionar à lista de desejos"}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
                   isInWishlist 
-                    ? 'border-red-500 text-red-600' 
+                    ? 'border-red-500 text-red-600 bg-red-50' 
                     : 'border-gray-300 hover:bg-gray-100'
                 }`}
               >
@@ -106,12 +105,16 @@ const BookDetails: React.FC<BookDetailsProps> = ({
               </button>
               
               <button 
-                onClick={handleAddToCart}
-                aria-label="Adicionar ao carrinho"
-                className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
+                onClick={handleToggleCart}
+                aria-label={isInCart ? "Remover do carrinho" : "Adicionar ao carrinho"}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                  isInCart
+                    ? 'border-green-500 text-green-600 bg-green-50'
+                    : 'border-gray-800 bg-gray-800 text-white hover:bg-gray-700'
+                }`}
               >
-                <FaShoppingCart />
-                <span>Adicionar ao Carrinho</span>
+                {isInCart ? <FaCheck className="text-green-500" /> : <FaShoppingCart />}
+                <span>{isInCart ? 'No Carrinho' : 'Adicionar ao Carrinho'}</span>
               </button>
             </div>
           </div>

@@ -1,68 +1,233 @@
-import React, { useState } from 'react'
-import { innerBrazil } from '../types/ufs'
-import { FaPix } from "react-icons/fa6"
-import { FaCreditCard, FaMoneyBillAlt } from "react-icons/fa"
+import { useState, useEffect } from 'react';
+import { innerBrazil } from '../types/ufs';
+import { FaPix, FaCheck } from "react-icons/fa6";
+import { FaCreditCard, FaMoneyBillAlt, FaShoppingCart } from "react-icons/fa";
+import { getCartItems, clearCart } from '../types/cart';
+import { Book } from '../types/Book';
+import { useNavigate } from 'react-router-dom';
 
 const Purchase = () => {
+  const [cartItems, setCartItems] = useState<Book[]>([]);
+  const [ufs, setUfs] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [address, setAddress] = useState({
+    cep: '',
+    street: '',
+    number: '',
+    complement: '',
+    neighborhood: '',
+    city: '',
+    state: ''
+  });
+  const navigate = useNavigate();
 
-    const [ufs, setUfs] = useState('')
+  useEffect(() => {
+    setCartItems(getCartItems());
+  }, []);
+
+  // Calculate totals
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+  const shipping = subtotal > 200 ? 0 : 15; // Free shipping for orders over R$200
+  const total = subtotal + shipping;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setAddress(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!paymentMethod) {
+      alert('Selecione um método de pagamento');
+      return;
+    }
+
+    if (!address.cep || !address.street || !address.number || !address.city || !ufs) {
+      alert('Preencha todos os campos obrigatórios do endereço');
+      return;
+    }
+
+    // Save order to localStorage
+    const orders = JSON.parse(localStorage.getItem('bookstore_orders') || '[]');
+    const newOrder = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      address: { ...address, state: ufs },
+      paymentMethod,
+      items: cartItems,
+      total
+    };
+    localStorage.setItem('bookstore_orders', JSON.stringify([...orders, newOrder]));
+    
+    clearCart();
+    navigate('/order-confirmation', { state: { order: newOrder } });
+  };
+
+  if (cartItems.length === 0) {
     return (
-        <div className='h-auto flex justify-center mt-28 mb-72'>
-            <form  className='h-screen w-3/5 items-center' action="">
-                <h1 className='my-10 text-4xl font-bold'>Finalizar Compra</h1>
-                <div className='grid grid-cols-6 gap-2 p-4 bg-gray-300 h-3/6 my-6 rounded-xl 
-                border-b-4 border-gray-500 ring-1 ring-black'>
-                    <input className='h-10 rounded-3xl pl-2 col-span-5 border-2 border-gray-600' 
-                    type="text" placeholder='CEP'/>
-                    <input className='h-10 rounded-3xl pl-2 col-span-4 border-2 border-gray-600' 
-                    type="text" placeholder='Endereço'/>
-                    <input className='h-10 rounded-3xl pl-2 col-span-1 border-2 border-gray-600' 
-                    type="number" placeholder='Número do end.'/>
-                    <input className='h-10 rounded-3xl pl-2 border-2 border-gray-600' 
-                    type="text" placeholder='Complemento'/>
-                    <input className='h-10 rounded-3xl pl-2 col-span-2 border-2 border-gray-600' 
-                    type="text" placeholder='Bairro'/>
-                    <input className='h-10 rounded-3xl pl-2 col-span-2 border-2 border-gray-600' 
-                    type="text" placeholder='Cidade'/>
-                    <select className='h-10 rounded-3xl pl-2 border-2 border-gray-600' 
-                    name="" id="" value={ufs} onChange={(e) => setUfs(e.target.value)}>{
-                        innerBrazil.map((uf) => (
-                            <option key={uf.sigla} value={uf.sigla}>{uf.sigla}</option>
-                        ))    
-                    }</select>
-                </div>
-                <div className='h-auto ring-1 ring-black rounded-t-xl'>
-                    <div className='py-4 z-10 flex bg-gray-400 justify-center h-3/5 rounded-t-xl items-center shadow-2xl relative'>
-                        <button className='px-2 m-2 border rounded-2xl h-14 w-3/12
-                        flex justify-center items-center'><FaCreditCard className='flex justify-center max-h-full w-1/4'/>Cartão de crédito</button>
-                        <button className='px-2 m-2 border rounded-2xl h-14 w-3/12
-                        flex justify-center items-center'><FaMoneyBillAlt className='flex justify-center max-h-full w-1/4'/>Cartão de débito</button>
-                        <button className='px-2 m-2 border rounded-2xl h-14 w-2/12
-                        flex justify-center items-center'><FaPix className='flex justify-center max-h-full w-1/4'/>PIX</button>
-                    </div>
-                    <div className='z-0'>
-                        <div className='flex justify-center flex-col items-center bg-gray-400 py-2'>
-                            <div className='flex w-3/5 justify-between text-2xl font-medium'>
-                                <p>Compras:</p>
-                                <p>R$xx.xx</p>
-                            </div>
-                            <div className='flex w-3/5 justify-between text-2xl font-medium my-4'>
-                                <p>Frete:</p>
-                                <p>R$yy.yy</p>
-                            </div>
-                            <div className='flex w-3/5 justify-between text-3xl font-semibold'>
-                                <p>Total:</p>
-                                <p>R$zz.zz</p>
-                            </div>
-                        </div>
-                        <div className='h-16 flex bg-gray-500 justify-center border-b-4 border-gray-700 text-2xl font-semibold'>
-                            <button className='w-full h-auto' type='submit'>Finalizar compra</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    )
-}
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+        <FaShoppingCart className="text-5xl text-gray-400" />
+        <p className="text-xl text-gray-600">Seu carrinho está vazio</p>
+        <button 
+          onClick={() => navigate('/')}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Voltar para a loja
+        </button>
+      </div>
+    );
+  }
 
-export default Purchase
+  return (
+    <div className="flex justify-center mt-10 mb-20 px-4">
+      <form className="w-full max-w-4xl" onSubmit={handleSubmit}>
+        <h1 className="my-8 text-3xl md:text-4xl font-bold text-center">Finalizar Compra</h1>
+
+        {/* Address Form */}
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-3 p-6 bg-gray-100 rounded-xl border-b-4 border-blue-400 ring-2 ring-blue-300 shadow-lg">
+          <input 
+            className="h-12 rounded-xl pl-3 md:col-span-3 border border-gray-400 focus:ring-2 focus:ring-blue-500" 
+            type="text" 
+            placeholder="CEP" 
+            name="cep"
+            value={address.cep}
+            onChange={handleInputChange}
+            required
+          />
+          <input 
+            className="h-12 rounded-xl pl-3 md:col-span-6 border border-gray-400 focus:ring-2 focus:ring-blue-500" 
+            type="text" 
+            placeholder="Endereço" 
+            name="street"
+            value={address.street}
+            onChange={handleInputChange}
+            required
+          />
+          <input 
+            className="h-12 rounded-xl pl-3 md:col-span-2 border border-gray-400 focus:ring-2 focus:ring-blue-500" 
+            type="number" 
+            placeholder="Número" 
+            name="number"
+            value={address.number}
+            onChange={handleInputChange}
+            required
+          />
+          <input 
+            className="h-12 rounded-xl pl-3 md:col-span-4 border border-gray-400 focus:ring-2 focus:ring-blue-500" 
+            type="text" 
+            placeholder="Complemento" 
+            name="complement"
+            value={address.complement}
+            onChange={handleInputChange}
+          />
+          <input 
+            className="h-12 rounded-xl pl-3 md:col-span-3 border border-gray-400 focus:ring-2 focus:ring-blue-500" 
+            type="text" 
+            placeholder="Bairro" 
+            name="neighborhood"
+            value={address.neighborhood}
+            onChange={handleInputChange}
+            required
+          />
+          <input 
+            className="h-12 rounded-xl pl-3 md:col-span-2 border border-gray-400 focus:ring-2 focus:ring-blue-500" 
+            type="text" 
+            placeholder="Cidade" 
+            name="city"
+            value={address.city}
+            onChange={handleInputChange}
+            required
+          />
+          <select
+            className="h-12 rounded-xl pl-3 md:col-span-1 border border-gray-400 focus:ring-2 focus:ring-blue-500"
+            name="state"
+            value={ufs}
+            onChange={(e) => setUfs(e.target.value)}
+            required
+          >
+            <option value="">UF</option>
+            {innerBrazil.map((uf) => (
+              <option key={uf.sigla} value={uf.sigla}>{uf.sigla}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Payment Section */}
+        <div className="mt-8 rounded-xl border-b-4 border-purple-300 ring-2 ring-purple-500 shadow-lg overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-around bg-purple-100 p-4 gap-2">
+            {['credit', 'debit', 'pix'].map((method) => (
+              <button
+                key={method}
+                type="button"
+                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border transition-all ${
+                  paymentMethod === method
+                    ? 'bg-purple-500 text-white border-purple-500'
+                    : 'bg-white border-purple-300 hover:bg-purple-200'
+                }`}
+                onClick={() => setPaymentMethod(method)}
+              >
+                {method === 'credit' && <FaCreditCard className="w-5 h-5" />}
+                {method === 'debit' && <FaMoneyBillAlt className="w-5 h-5" />}
+                {method === 'pix' && <FaPix className="w-5 h-5" />}
+                {method === 'credit' && 'Crédito'}
+                {method === 'debit' && 'Débito'}
+                {method === 'pix' && 'PIX'}
+                {paymentMethod === method && <FaCheck className="ml-1" />}
+              </button>
+            ))}
+          </div>
+
+          {/* Order Summary */}
+          <div className="bg-purple-50 px-6 py-4">
+            <h3 className="text-xl font-bold mb-3">Resumo do Pedido</h3>
+            <div className="max-h-60 overflow-y-auto mb-4">
+              {cartItems.map(item => (
+                <div key={item.isbn?.[0]} className="flex justify-between items-center py-2 border-b border-gray-200">
+                  <div className="flex-1">
+                    <p className="font-medium">{item.title}</p>
+                    <p className="text-sm text-gray-600">Qtd: {item.quantity || 1}</p>
+                  </div>
+                  <p className="font-medium">
+                    {((item.price || 0) * (item.quantity || 1)).toLocaleString('pt-BR', { 
+                      style: 'currency', 
+                      currency: 'BRL' 
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+            
+            <div className="border-t border-gray-300 my-2"></div>
+            <div className="flex justify-between text-lg font-medium mb-2">
+              <p>Subtotal:</p>
+              <p>{subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+            </div>
+            <div className="flex justify-between text-lg font-medium mb-2">
+              <p>Frete:</p>
+              <p>{shipping.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+            </div>
+            <div className="flex justify-between text-xl font-bold mt-3 pt-2 border-t border-gray-300">
+              <p>Total:</p>
+              <p>{total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!paymentMethod || !address.cep}
+            className={`w-full py-4 text-white text-xl font-semibold transition-colors ${
+              !paymentMethod || !address.cep
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-purple-600 hover:bg-purple-700'
+            }`}
+          >
+            Finalizar compra
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default Purchase;

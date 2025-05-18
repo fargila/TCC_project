@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaPlus, FaMinus } from 'react-icons/fa';
 import { Book } from '../types/Book';
+import { Link } from 'react-router-dom';
 
 interface CartProps {
   cartItems: Book[];
@@ -164,8 +165,8 @@ const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart }) =>
               <label className="block mb-1 text-sm">Frete</label>
               <select className="w-full border h-8 rounded px-2" onChange={handleFreteChange}>
                 <option value="">Selecionar...</option>
-                <option value="express">Expresso (menos de 1 dia)</option>
-                <option value="standard">Padrão (3 a 5 dias)</option>
+                <option value="express">Expresso (menos de 2 dias)</option>
+                <option value="standard">Padrão (5 dias)</option>
                 <option value="economy">Econômico (10 dias - Grátis)</option>
               </select>
             </div>
@@ -207,7 +208,7 @@ const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart }) =>
             disabled={localCartItems.length === 0}
             className={`py-2 mt-6 rounded text-white ${localCartItems.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-800 hover:bg-blue-900'}`}
           >
-            Finalizar Compra
+          Comprar
           </button>
         </div>
       </div>
