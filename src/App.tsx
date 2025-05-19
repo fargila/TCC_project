@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Catalog from './pages/Catalog';
 import Purchase from './pages/Purchase';
 import OrderConfirmation from './pages/OrderConfirmation';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Cart from './components/Cart';
 import Wishlist from './components/WishList';
 import Footer from './components/Footer';
@@ -12,7 +12,9 @@ import { Book } from './types/Book';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const App: React.FC = () => {
+// Main app content that requires navigation
+const AppContent = () => {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<Book[]>([]);
   const [wishlistItems, setWishlistItems] = useState<Book[]>([]);
   const [modalContent, setModalContent] = useState<'cart' | 'wishlist' | null>(null);
@@ -21,31 +23,31 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-  const fetchBooks = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        'https://openlibrary.org/search.json?q=subject:fiction&limit=100&fields=title,author_name,cover_i,isbn,first_publish_year'
-      );
-      const data = await response.json();
+    const fetchBooks = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          'https://openlibrary.org/search.json?q=subject:fiction&limit=100&fields=title,author_name,cover_i,isbn,first_publish_year'
+        );
+        const data = await response.json();
 
-      const processedBooks = data.docs
-        .filter((book: Book) => book.isbn?.[0] || book.cover_i)
-        .map((book: Book) => ({
-          ...book,
-          price: parseFloat(((Math.random() * (250 - 30)) + 30).toFixed(2)) // Fixed this line
-        }));
+        const processedBooks = data.docs
+          .filter((book: Book) => book.isbn?.[0] || book.cover_i)
+          .map((book: Book) => ({
+            ...book,
+            price: parseFloat(((Math.random() * (250 - 30)) + 30).toFixed(2))
+          }));
 
-      setBooks(processedBooks);
-    } catch (error) {
-      console.error("Error fetching books:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setBooks(processedBooks);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchBooks();
-}, []);
+    fetchBooks();
+  }, []);
 
   const handleUpdateCart = (updatedCart: Book[]) => {
     setCartItems(updatedCart);
@@ -87,66 +89,83 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
-      <div className="App">
-        <Header
-          cartCount={cartItems.length}
-          wishlistCount={wishlistItems.length}
-          setModalContent={setModalContent}
+    <div className="App">
+      <Header
+        cartCount={cartItems.length}
+        wishlistCount={wishlistItems.length}
+        setModalContent={setModalContent}
+      />
+
+      <Routes>
+        <Route path="order-confirmation" element={<OrderConfirmation />} />
+        <Route
+          path="/"
+          element={
+            <Catalog
+              books={books}
+              onToggleCart={handleToggleCart}
+              onToggleWishlist={handleToggleWishlist}
+              wishlist={wishlistItems}
+              loading={loading}
+              onOpenBookDetails={handleOpenBookDetails}
+            />
+          }
         />
+        <Route 
+          path="purchase" 
+          element={
+            <Purchase 
+              cartItems={cartItems}
+              onNavigateBack={() => navigate('/')}
+            />
+          } 
+        />
+      </Routes>
 
-        <Routes>
+      {selectedBook && (
+        <BookDetails
+          book={selectedBook}
+          onClose={handleCloseModal}
+          onToggleCart={handleToggleCart}
+          onToggleWishlist={handleToggleWishlist}
+          isInWishlist={isInWishlist(selectedBook)}
+          isInCart={isInCart(selectedBook)}
+        />
+      )}
 
-          <Route path="order-confirmation" element={<OrderConfirmation />} />
+      {modalContent === 'cart' && (
+        <Cart 
+          cartItems={cartItems}
+          onClose={handleCloseModal}
+          onUpdateCart={handleUpdateCart}
+          onPurchase={() => {
+            handleCloseModal();
+            navigate('/purchase');
+          }}
+        />
+      )}
 
-          <Route
-            path="/"
-            element={
-              <Catalog
-                books={books}
-                onToggleCart={handleToggleCart}
-                onToggleWishlist={handleToggleWishlist}
-                wishlist={wishlistItems}
-                loading={loading}
-                onOpenBookDetails={handleOpenBookDetails}
-              />
-            }
-          />
-          <Route path="purchase" element={<Purchase/>}/>
-        </Routes>
+      {modalContent === 'wishlist' && (
+        <Wishlist
+          wishlistItems={wishlistItems}
+          onClose={handleCloseModal}
+          onToggleCart={handleToggleCart}
+          onToggleWishlist={handleToggleWishlist}
+          isInCart={isInCart}
+        />
+      )}
 
-        {selectedBook && (
-          <BookDetails
-            book={selectedBook}
-            onClose={handleCloseModal}
-            onToggleCart={handleToggleCart}
-            onToggleWishlist={handleToggleWishlist}
-            isInWishlist={isInWishlist(selectedBook)}
-            isInCart={isInCart(selectedBook)}
-          />
-        )}
-
-        {modalContent === 'cart' && (
-          <Cart 
-            cartItems={cartItems}
-            onClose={handleCloseModal}
-            onUpdateCart={handleUpdateCart}
-          />
-        )}
-
-        {modalContent === 'wishlist' && (
-          <Wishlist
-            wishlistItems={wishlistItems}
-            onClose={handleCloseModal}
-            onToggleCart={handleToggleCart}
-            onToggleWishlist={handleToggleWishlist}
-            isInCart={isInCart} // Add this line
-          />
-        )}
-
-        <Footer />
-      </div>
+      <Footer />
       <ToastContainer />
+    </div>
+  );
+};
+
+// Main App component with Router
+const App: React.FC = () => {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 };

@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaPlus, FaMinus } from 'react-icons/fa';
 import { Book } from '../types/Book';
-import { Link } from 'react-router-dom';
 
 interface CartProps {
   cartItems: Book[];
   onClose: () => void;
   onUpdateCart: (updatedCart: Book[]) => void;
+  onPurchase: (cartItems: Book[], total: number) => void;
 }
 
-const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart }) => {
+const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart, onPurchase }) => {
   const [localCartItems, setLocalCartItems] = useState(cartItems);
-  const [frete, setFrete] = useState(0);
+  const [frete, setFrete] = useState<string>(''); // Changed to string type
   const [cupom, setCupom] = useState('');
   const [desconto, setDesconto] = useState(0);
   const [cupomMessage, setCupomMessage] = useState('');
+  const [freteError, setFreteError] = useState('');
 
   useEffect(() => {
     setLocalCartItems(cartItems);
@@ -56,21 +57,34 @@ const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart }) =>
     return localCartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  const calculateTotal = () => {
+   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
     const discountValue = subtotal * desconto;
-    return subtotal - discountValue + frete;
+    return subtotal - discountValue + getFreteValue();
   };
 
   const handleFreteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const option = e.target.value;
-    if (option === 'express') {
-      setFrete(35);
-    } else if (option === 'standard') {
-      setFrete(15); 
-    } else {
-      setFrete(0);
+    const value = e.target.value;
+    setFrete(value);
+    setFreteError('');
+  };
+
+  const getFreteValue = () => {
+    switch(frete) {
+      case 'express': return 35;
+      case 'standard': return 15;
+      case 'economy': return 0;
+      default: return 0;
     }
+  };
+
+  const handlePurchase = () => {
+    if (!frete) {
+      setFreteError('Selecione uma opção de frete');
+      return;
+    }
+    setFreteError('');
+    onPurchase(localCartItems, calculateTotal());
   };
 
   return (
@@ -163,12 +177,19 @@ const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart }) =>
 
             <div className="mb-4">
               <label className="block mb-1 text-sm">Frete</label>
-              <select className="w-full border h-8 rounded px-2" onChange={handleFreteChange}>
+              <select 
+                className={`w-full border h-8 rounded px-2 ${freteError ? 'border-red-500' : ''}`} 
+                onChange={handleFreteChange}
+                value={frete}
+              >
                 <option value="">Selecionar...</option>
-                <option value="express">Expresso (menos de 2 dias)</option>
-                <option value="standard">Padrão (5 dias)</option>
+                <option value="express">Expresso (menos de 2 dias) - R$35</option>
+                <option value="standard">Padrão (5 dias) - R$15</option>
                 <option value="economy">Econômico (10 dias - Grátis)</option>
               </select>
+              {freteError && (
+                <p className="text-red-500 text-xs mt-1">{freteError}</p>
+              )}
             </div>
 
             <div className="mb-4">
@@ -205,10 +226,15 @@ const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart }) =>
           </div>
 
           <button
-            disabled={localCartItems.length === 0}
-            className={`py-2 mt-6 rounded text-white ${localCartItems.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-800 hover:bg-blue-900'}`}
+            disabled={localCartItems.length === 0 || !frete}
+            className={`py-2 mt-6 rounded text-white ${
+              localCartItems.length === 0 || !frete
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-blue-800 hover:bg-blue-900'
+            }`}
+            onClick={handlePurchase}
           >
-          Comprar
+            Comprar
           </button>
         </div>
       </div>

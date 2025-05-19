@@ -47,7 +47,7 @@ const Wishlist: React.FC<WishlistProps> = ({
             <p>Sua lista de desejos está vazia.</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4 ">
             {wishlistItems.map((item) => {
               const bookInCart = isInCart(item);
               return (

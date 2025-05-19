@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { innerBrazil } from '../types/ufs';
-import { FaPix, FaCheck } from "react-icons/fa6";
+import { FaPix, FaCheck, FaBarcode } from "react-icons/fa6";
 import { FaCreditCard, FaMoneyBillAlt, FaShoppingCart } from "react-icons/fa";
-import { getCartItems, clearCart } from '../types/cart';
 import { Book } from '../types/Book';
 import { useNavigate } from 'react-router-dom';
 
-const Purchase = () => {
-  const [cartItems, setCartItems] = useState<Book[]>([]);
+interface PurchaseProps {
+  cartItems: Book[];
+}
+
+const Purchase = ({ cartItems }: PurchaseProps) => {
   const [ufs, setUfs] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [address, setAddress] = useState({
@@ -19,16 +21,27 @@ const Purchase = () => {
     city: '',
     state: ''
   });
+  const [selectedInstallment, setSelectedInstallment] = useState(1);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setCartItems(getCartItems());
-  }, []);
-
-  // Calculate totals
+  // Calculate cart total
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
-  const shipping = subtotal > 200 ? 0 : 15; // Free shipping for orders over R$200
+  const shipping = subtotal > 200 ? 0 : 15;
   const total = subtotal + shipping;
+
+  // Calculate installment options with progressive fees (5% per installment)
+  const installmentOptions = Array.from({ length: 12 }, (_, i) => {
+    const installments = i + 1;
+    const feePercentage = i * 0.05; // 5% per additional installment
+    const totalWithFee = total * (1 + feePercentage);
+    const monthlyValue = totalWithFee / installments;
+    
+    return {
+      installments,
+      value: parseFloat(monthlyValue.toFixed(2)),
+      totalWithFee: parseFloat(totalWithFee.toFixed(2))
+    };
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -48,25 +61,27 @@ const Purchase = () => {
       return;
     }
 
-    // Save order to localStorage
-    const orders = JSON.parse(localStorage.getItem('bookstore_orders') || '[]');
+    const selectedOption = installmentOptions.find(opt => opt.installments === selectedInstallment);
+    
     const newOrder = {
       id: Date.now(),
       date: new Date().toISOString(),
       address: { ...address, state: ufs },
       paymentMethod,
       items: cartItems,
-      total
+      subtotal,
+      shipping,
+      total: paymentMethod === 'credit' ? selectedOption?.totalWithFee || total : total,
+      installments: paymentMethod === 'credit' ? selectedInstallment : 1,
+      monthlyValue: paymentMethod === 'credit' ? selectedOption?.value : total
     };
-    localStorage.setItem('bookstore_orders', JSON.stringify([...orders, newOrder]));
-    
-    clearCart();
+
     navigate('/order-confirmation', { state: { order: newOrder } });
   };
 
   if (cartItems.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 gap-4">
+      <div className="flex flex-col items-center justify-center h-96 gap-4 my-36">
         <FaShoppingCart className="text-5xl text-gray-400" />
         <p className="text-xl text-gray-600">Seu carrinho está vazio</p>
         <button 
@@ -80,7 +95,7 @@ const Purchase = () => {
   }
 
   return (
-    <div className="flex justify-center mt-10 mb-20 px-4">
+    <div className="flex justify-center my-36 px-4">
       <form className="w-full max-w-4xl" onSubmit={handleSubmit}>
         <h1 className="my-8 text-3xl md:text-4xl font-bold text-center">Finalizar Compra</h1>
 
@@ -116,7 +131,7 @@ const Purchase = () => {
           <input 
             className="h-12 rounded-xl pl-3 md:col-span-4 border border-gray-400 focus:ring-2 focus:ring-blue-500" 
             type="text" 
-            placeholder="Complemento" 
+            placeholder="Complemento (opcional)" 
             name="complement"
             value={address.complement}
             onChange={handleInputChange}
@@ -156,7 +171,7 @@ const Purchase = () => {
         {/* Payment Section */}
         <div className="mt-8 rounded-xl border-b-4 border-purple-300 ring-2 ring-purple-500 shadow-lg overflow-hidden">
           <div className="flex flex-col md:flex-row justify-around bg-purple-100 p-4 gap-2">
-            {['credit', 'debit', 'pix'].map((method) => (
+            {['credit', 'debit', 'pix', 'boleto'].map((method) => (
               <button
                 key={method}
                 type="button"
@@ -170,13 +185,44 @@ const Purchase = () => {
                 {method === 'credit' && <FaCreditCard className="w-5 h-5" />}
                 {method === 'debit' && <FaMoneyBillAlt className="w-5 h-5" />}
                 {method === 'pix' && <FaPix className="w-5 h-5" />}
+                {method === 'boleto' && <FaBarcode className="w-5 h-5" />}
                 {method === 'credit' && 'Crédito'}
                 {method === 'debit' && 'Débito'}
                 {method === 'pix' && 'PIX'}
+                {method === 'boleto' && 'Boleto'}
                 {paymentMethod === method && <FaCheck className="ml-1" />}
               </button>
             ))}
           </div>
+
+          {/* Installment Options */}
+          {paymentMethod === 'credit' && (
+            <div className="bg-white p-4 border-t border-purple-200">
+              <h3 className="text-lg font-bold mb-2">Parcelamento</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {installmentOptions.map((option) => (
+                  <button
+                    key={option.installments}
+                    type="button"
+                    className={`p-2 border rounded-lg text-center ${
+                      selectedInstallment === option.installments
+                        ? 'bg-purple-100 border-purple-500'
+                        : 'border-gray-300 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setSelectedInstallment(option.installments)}
+                  >
+                    <div className="font-medium">{option.installments}x</div>
+                    <div className="text-sm">
+                      {option.value.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      })}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Order Summary */}
           <div className="bg-purple-50 px-6 py-4">
@@ -207,10 +253,39 @@ const Purchase = () => {
               <p>Frete:</p>
               <p>{shipping.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
             </div>
+            {paymentMethod === 'credit' && selectedInstallment > 1 && (
+              <div className="flex justify-between text-lg font-medium mb-2">
+                <p>Juros ({(selectedInstallment - 1) * 5}%):</p>
+                <p>
+                  {(installmentOptions[selectedInstallment - 1].totalWithFee - total).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                  })}
+                </p>
+              </div>
+            )}
             <div className="flex justify-between text-xl font-bold mt-3 pt-2 border-t border-gray-300">
               <p>Total:</p>
-              <p>{total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+              <p>
+                {paymentMethod === 'credit' 
+                  ? installmentOptions[selectedInstallment - 1].totalWithFee.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL'
+                    })
+                  : total.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL'
+                    })}
+              </p>
             </div>
+            {paymentMethod === 'credit' && selectedInstallment > 1 && (
+              <div className="text-center mt-2 text-purple-700 font-medium">
+                {selectedInstallment}x de {installmentOptions[selectedInstallment - 1].value.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL'
+                })}
+              </div>
+            )}
           </div>
 
           <button

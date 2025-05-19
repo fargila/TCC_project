@@ -26,8 +26,8 @@ function Footer() {
         <div className=' text-xl'>
             <p className='font-bold mb-6'>Team members</p>
             <p className='py-2'>Átila França do Nascimento</p>
-            <p className='py-2'>Cauê</p>
-            <p className='py-2'>Arthur</p>
+            <p className='py-2'>Cauê Cassiano dos Santos</p>
+            <p className='py-2'>Arthur do Amaral da Silva</p>
         </div>
         <div className=' text-xl'>
             <p className='font-bold mb-6'>About Us</p>
@@ -39,8 +39,6 @@ function Footer() {
             <p className='py-2'><a href='https://blog.magezon.com/website-shopping-cart-page-ultimate-guide-ecm/'>Cart's ref.</a></p>
             <p className='py-2'><a href='https://cssauthor.com/e-commerce-template-psd-for-online-bookstore/'>Catalog's ref.</a></p>
             <p className='py-2'><a href="https://nerdcave.com/tailwind-cheat-sheet">TailwindCSS styles sheets</a></p>
-            <p className='py-2'>Link 4</p>
-            <p className='py-2'>Link 5</p>
         </div>
       </div>
     </footer>

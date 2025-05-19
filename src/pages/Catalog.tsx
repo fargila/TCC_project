@@ -10,7 +10,7 @@ interface CatalogProps {
   wishlist: Book[];
   loading: boolean;
   onOpenBookDetails: (book: Book) => void;
-  isInCart?: (book: Book) => boolean; // Optional if you want cart status
+  isInCart: (book: Book) => boolean; // Optional if you want cart status
 }
 
 const ITEMS_PER_PAGE = 20;
@@ -67,46 +67,62 @@ export const Catalog: React.FC<CatalogProps> = ({
   return (
     <div className='h-auto flex justify-center flex-col my-40'>
       <div className='h-auto flex w-full'>
-        <div className='border border-black bg-gray-100 w-2/12 flex rounded-r-xl justify-between flex-col'>
+        <div className=' flex justify-between flex-col
+        border border-gray-300 bg-gray-50 w-full lg:w-56 flex-shrink-0 rounded-lg shadow-md mb-4 lg:mb-0 lg:mr-6'>
           <div className='flex w-full flex-col'>
-            <h1 className='text-4xl border-b-2 border-black font-bold pb-4 pl-3 bg-gray-300 rounded-tr-xl'>Categorias</h1>
-            {sideCategories.map((category) => {
+            <h1 className='text-2xl font-bold p-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-t-lg'>
+              Categorias
+            </h1>
+            <div className='p-2 space-y-1'>
+              {sideCategories.map((category) => {
+                const isSelected = selectedSideCategories.includes(category) || 
+                                 (category === 'Tudo' && selectedSideCategories.length === 0);
+                return (
+                  <button
+                    key={category}
+                    onClick={() => toggleSideCategory(category)}
+                    className={`w-full text-left px-4 py-2 rounded-md transition-all duration-200 ${
+                      isSelected 
+                        ? 'bg-blue-100 text-blue-800 font-semibold border-l-4 border-blue-600'
+                        : 'hover:bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div className='w-full p-2'>
+            <button 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className='w-full flex justify-center items-center py-3 bg-gray-100 hover:bg-gray-200 rounded-b-lg transition-colors text-gray-700'
+            >
+              <FaCaretUp className="mr-2" />
+              Voltar ao topo
+            </button>
+          </div>
+        </div>
+
+        <div className='flex-1 border border-gray-300 rounded-lg shadow-md overflow-hidden mr-10'>
+          {/* Grid Categories - Improved Styling */}
+          <div className='w-full bg-gray-50 p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-9 gap-1'>
+            {gridCategories.map((category) => {
               const isSelected = selectedSideCategories.includes(category);
               return (
                 <button
                   key={category}
                   onClick={() => toggleSideCategory(category)}
-                  className={`pl-7 pb-2 border-b border-black flex justify-start text-left ${
-                    isSelected ? 'bg-gray-400 font-bold' : ''
+                  className={`px-3 py-2 text-sm rounded-md transition-all duration-200 ${
+                    isSelected
+                      ? 'bg-blue-600 text-white font-medium shadow-md'
+                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                   }`}
                 >
                   {category}
                 </button>
               );
             })}
-          </div>
-          <div className='w-full'>
-            <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className='w-full flex justify-center border-t border-black bg-white items-center rounded-br-xl h-20'>
-              <FaCaretUp />
-            </button>
-          </div>
-        </div>
-
-        <div className='ml-4 border border-black flex flex-col w-10/12 h-auto justify-between items-center mr-10'>
-          <div className='w-full h-14 grid grid-cols-9'>
-            {gridCategories.map((category) => (
-              <button
-                key={category}
-                onClick={() => toggleSideCategory(category)}
-                className={`text-center border-b border-black flex justify-center items-center ${
-                  selectedSideCategories.includes(category) ? 'bg-gray-400 font-bold' : ''
-                }`}
-              >
-                {category}
-              </button>
-            ))}
           </div>
 
           {loading ? (

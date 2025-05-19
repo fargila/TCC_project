@@ -6,7 +6,6 @@ export interface Book {
   price: number;
   first_publish_year?: number;
   publisher?: string[];
-  description?: string | { value?: string };
   coverUrl?: string;
-  quantity?: number;
+  quantity: number;
 }
