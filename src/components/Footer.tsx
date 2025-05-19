@@ -18,8 +18,31 @@ function Footer() {
             <p className='font-bold mb-6'>Social Media</p>
             <div className='flex w-full flex-col'>
                 <div className='flex py-2'>
-                    <button className='border border-black rounded-full text-2xl mr-4 p-2 object-cover'><FaInstagram/></button>
-                    <button className='border border-black rounded-full text-2xl p-2 object-cover'><FaLinkedinIn/> </button>
+                    <a 
+        href='https://www.instagram.com/_fargila/' 
+        className='
+          border border-black rounded-full text-2xl mr-4 p-2 
+          bg-white hover:bg-pink-50 
+          text-pink-600 hover:text-pink-700 
+          transition-colors duration-200
+          shadow-sm hover:shadow-md
+        '
+      >
+        <FaInstagram/>
+      </a>
+      
+      <a 
+        href='https://www.linkedin.com/in/%C3%A1tila-fran%C3%A7a-8066a0249/' 
+        className='
+          border border-black rounded-full text-2xl p-2 
+          bg-white hover:bg-blue-50 
+          text-blue-600 hover:text-blue-700 
+          transition-colors duration-200
+          shadow-sm hover:shadow-md
+        '
+      >
+        <FaLinkedinIn/>
+      </a>
                 </div>
             </div>
         </div>
@@ -31,14 +54,53 @@ function Footer() {
         </div>
         <div className=' text-xl'>
             <p className='font-bold mb-6'>About Us</p>
-            <p className='py-2'>Our institution</p>
-            <p className='py-2'>About this project</p>
+            <a 
+              href='https://www.unipe.edu.br/' 
+              className='
+                py-2 text-gray-700 hover:text-blue-600 
+                transition-colors duration-200
+                hover:underline underline-offset-4
+              '>Our institution
+            </a>
+            <p className='py-2'>About this project (in progress)</p>
         </div>
         <div className='pr-8 text-xl'>
             <p className='font-bold mb-6'>Useful Links</p>
-            <p className='py-2'><a href='https://blog.magezon.com/website-shopping-cart-page-ultimate-guide-ecm/'>Cart's ref.</a></p>
-            <p className='py-2'><a href='https://cssauthor.com/e-commerce-template-psd-for-online-bookstore/'>Catalog's ref.</a></p>
-            <p className='py-2'><a href="https://nerdcave.com/tailwind-cheat-sheet">TailwindCSS styles sheets</a></p>
+            <a 
+            href='https://blog.magezon.com/website-shopping-cart-page-ultimate-guide-ecm/' 
+            className='
+              py-2 text-gray-700 hover:text-blue-600 
+              transition-colors duration-200
+              hover:underline underline-offset-4
+              block
+            '
+          >
+            Cart's ref.
+          </a>
+          
+          <a 
+            href='https://cssauthor.com/e-commerce-template-psd-for-online-bookstore/' 
+            className='
+              py-2 text-gray-700 hover:text-blue-600 
+              transition-colors duration-200
+              hover:underline underline-offset-4
+              block
+            '
+          >
+            Catalog's ref.
+          </a>
+          
+          <a 
+            href='https://nerdcave.com/tailwind-cheat-sheet' 
+            className='
+              py-2 text-gray-700 hover:text-blue-600 
+              transition-colors duration-200
+              hover:underline underline-offset-4
+              block
+            '
+          >
+            TailwindCSS styles sheets
+          </a>
         </div>
       </div>
     </footer>

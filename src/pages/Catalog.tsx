@@ -5,24 +5,24 @@ import { Book } from '../types/Book'
 
 interface CatalogProps {
   books: Book[];
-  onToggleCart: (book: Book) => void; // Changed from onAddToCart
+  onToggleCart: (book: Book) => void;
   onToggleWishlist: (book: Book) => void;
   wishlist: Book[];
   loading: boolean;
   onOpenBookDetails: (book: Book) => void;
-  isInCart: (book: Book) => boolean; // Optional if you want cart status
+  isInCart: (book: Book) => boolean;
 }
 
 const ITEMS_PER_PAGE = 20;
 
 export const Catalog: React.FC<CatalogProps> = ({
   books,
-  onToggleCart, // Changed from onAddToCart
+  onToggleCart,
   onToggleWishlist,
   wishlist,
   loading,
   onOpenBookDetails,
-  isInCart // Optional
+  isInCart
 }) => {
   const [currentBooks, setCurrentBooks] = useState<Book[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -105,7 +105,6 @@ export const Catalog: React.FC<CatalogProps> = ({
         </div>
 
         <div className='flex-1 border border-gray-300 rounded-lg shadow-md overflow-hidden mr-10'>
-          {/* Grid Categories - Improved Styling */}
           <div className='w-full bg-gray-50 p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-9 gap-1'>
             {gridCategories.map((category) => {
               const isSelected = selectedSideCategories.includes(category);
@@ -132,8 +131,8 @@ export const Catalog: React.FC<CatalogProps> = ({
               books={currentBooks}
               onToggleCart={onToggleCart}
               onToggleWishlist={onToggleWishlist}
-              wishlist={wishlist}  // Fixed this line
-              isInCart={isInCart} // This must be provided
+              wishlist={wishlist}
+              isInCart={isInCart}
               onOpenBookDetails={onOpenBookDetails}
             />
           )}

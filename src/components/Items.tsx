@@ -7,7 +7,7 @@ interface ItemsProps {
   onToggleCart: (book: Book) => void;
   onToggleWishlist: (book: Book) => void;
   wishlist?: Book[];
-  isInCart: (book: Book) => boolean; // Changed to required
+  isInCart: (book: Book) => boolean;
   onOpenBookDetails?: (book: Book) => void;
 }
 
@@ -16,7 +16,7 @@ const Items: React.FC<ItemsProps> = ({
   onToggleCart,
   onToggleWishlist,
   wishlist = [],
-  isInCart, // Now required
+  isInCart,
   onOpenBookDetails
 }) => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null); 
@@ -80,7 +80,7 @@ const Items: React.FC<ItemsProps> = ({
           onToggleCart={onToggleCart}
           onToggleWishlist={onToggleWishlist}
           isInWishlist={wishlist.some(item => item.isbn?.[0] === selectedBook.isbn?.[0])}
-          isInCart={isInCart(selectedBook)} // Now guaranteed to be boolean
+          isInCart={isInCart(selectedBook)}
         />
       )}
     </>

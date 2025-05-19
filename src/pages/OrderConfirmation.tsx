@@ -7,7 +7,6 @@ const OrderConfirmation = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
     if (!state?.order) {
@@ -16,7 +15,6 @@ const OrderConfirmation = () => {
   }, [state, navigate]);
 
   const handleContinueShopping = () => {
-    // Refresh the page and navigate to home
     window.location.href = '/';
   };
 

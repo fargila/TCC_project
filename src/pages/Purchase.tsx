@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface PurchaseProps {
   cartItems: Book[];
+  onNavigateBack: () => void;
 }
 
 const Purchase = ({ cartItems }: PurchaseProps) => {
@@ -24,15 +25,13 @@ const Purchase = ({ cartItems }: PurchaseProps) => {
   const [selectedInstallment, setSelectedInstallment] = useState(1);
   const navigate = useNavigate();
 
-  // Calculate cart total
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
   const shipping = subtotal > 200 ? 0 : 15;
   const total = subtotal + shipping;
 
-  // Calculate installment options with progressive fees (5% per installment)
   const installmentOptions = Array.from({ length: 12 }, (_, i) => {
     const installments = i + 1;
-    const feePercentage = i * 0.05; // 5% per additional installment
+    const feePercentage = i * 0.05;
     const totalWithFee = total * (1 + feePercentage);
     const monthlyValue = totalWithFee / installments;
     
@@ -99,7 +98,7 @@ const Purchase = ({ cartItems }: PurchaseProps) => {
       <form className="w-full max-w-4xl" onSubmit={handleSubmit}>
         <h1 className="my-8 text-3xl md:text-4xl font-bold text-center">Finalizar Compra</h1>
 
-        {/* Address Form */}
+        {/* Parte do endereço */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-3 p-6 bg-gray-100 rounded-xl border-b-4 border-blue-400 ring-2 ring-blue-300 shadow-lg">
           <input 
             className="h-12 rounded-xl pl-3 md:col-span-3 border border-gray-400 focus:ring-2 focus:ring-blue-500" 
@@ -168,7 +167,7 @@ const Purchase = ({ cartItems }: PurchaseProps) => {
           </select>
         </div>
 
-        {/* Payment Section */}
+        {/* Parte do pagamento */}
         <div className="mt-8 rounded-xl border-b-4 border-purple-300 ring-2 ring-purple-500 shadow-lg overflow-hidden">
           <div className="flex flex-col md:flex-row justify-around bg-purple-100 p-4 gap-2">
             {['credit', 'debit', 'pix', 'boleto'].map((method) => (
@@ -195,7 +194,7 @@ const Purchase = ({ cartItems }: PurchaseProps) => {
             ))}
           </div>
 
-          {/* Installment Options */}
+          {/* Parcelamento */}
           {paymentMethod === 'credit' && (
             <div className="bg-white p-4 border-t border-purple-200">
               <h3 className="text-lg font-bold mb-2">Parcelamento</h3>
@@ -224,7 +223,7 @@ const Purchase = ({ cartItems }: PurchaseProps) => {
             </div>
           )}
 
-          {/* Order Summary */}
+          {/* Sumário */}
           <div className="bg-purple-50 px-6 py-4">
             <h3 className="text-xl font-bold mb-3">Resumo do Pedido</h3>
             <div className="max-h-60 overflow-y-auto mb-4">

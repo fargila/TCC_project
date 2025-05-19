@@ -85,7 +85,11 @@ const BookDetails: React.FC<BookDetailsProps> = ({
               <div>
                 <h3 className="text-lg font-semibold border-b border-gray-200 pb-2 mb-2">Enredo</h3>
                 <p className="text-gray-700 mb-6">
-                  {book.description?.value || 'Descrição não disponível'}
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non neque sed purus
+                  fermentum luctus venenatis sit amet enim. Fusce nec dignissim urna. Pellentesque
+                  habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+                  Donec egestas efficitur justo ut hendrerit. Proin hendrerit, felis eget vehicula mollis,
+                  metus ex tempus nisl, eu pretium nisi massa sit amet libero.
                 </p>
               </div>
             </div>

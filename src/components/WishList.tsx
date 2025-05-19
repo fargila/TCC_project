@@ -7,7 +7,7 @@ interface WishlistProps {
   onClose: () => void;
   onToggleCart: (book: Book) => void;
   onToggleWishlist: (book: Book) => void;
-  isInCart: (book: Book) => boolean; // Changed to required
+  isInCart: (book: Book) => boolean;
 }
 
 const Wishlist: React.FC<WishlistProps> = ({
@@ -15,7 +15,7 @@ const Wishlist: React.FC<WishlistProps> = ({
   onClose,
   onToggleCart,
   onToggleWishlist,
-  isInCart // Now required
+  isInCart 
 }) => {
   const getCoverUrl = (isbn: string, size: 'S' | 'M' | 'L' = 'M') => {
     return `https://covers.openlibrary.org/b/isbn/${isbn}-${size}.jpg`;

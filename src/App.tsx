@@ -12,7 +12,6 @@ import { Book } from './types/Book';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Main app content that requires navigation
 const AppContent = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<Book[]>([]);
@@ -21,6 +20,7 @@ const AppContent = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -39,6 +39,7 @@ const AppContent = () => {
           }));
 
         setBooks(processedBooks);
+        setFilteredBooks(processedBooks);
       } catch (error) {
         console.error("Error fetching books:", error);
       } finally {
@@ -91,9 +92,11 @@ const AppContent = () => {
   return (
     <div className="App">
       <Header
-        cartCount={cartItems.length}
+       cartCount={cartItems.length}
         wishlistCount={wishlistItems.length}
         setModalContent={setModalContent}
+        books={books}
+        setFilteredBooks={setFilteredBooks}
       />
 
       <Routes>
@@ -102,12 +105,13 @@ const AppContent = () => {
           path="/"
           element={
             <Catalog
-              books={books}
+              books={filteredBooks}
               onToggleCart={handleToggleCart}
               onToggleWishlist={handleToggleWishlist}
               wishlist={wishlistItems}
               loading={loading}
               onOpenBookDetails={handleOpenBookDetails}
+              isInCart={isInCart}
             />
           }
         />
@@ -161,7 +165,6 @@ const AppContent = () => {
   );
 };
 
-// Main App component with Router
 const App: React.FC = () => {
   return (
     <Router>

@@ -11,7 +11,7 @@ interface CartProps {
 
 const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart, onPurchase }) => {
   const [localCartItems, setLocalCartItems] = useState(cartItems);
-  const [frete, setFrete] = useState<string>(''); // Changed to string type
+  const [frete, setFrete] = useState<string>('');
   const [cupom, setCupom] = useState('');
   const [desconto, setDesconto] = useState(0);
   const [cupomMessage, setCupomMessage] = useState('');
@@ -91,7 +91,7 @@ const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart, onPu
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white w-11/12 max-w-6xl flex h-5/6 rounded-lg overflow-hidden shadow-lg">
         
-        {/* Left Side */}
+        {/* Lado esquerdo */}
         <div className="w-3/4 p-6 flex flex-col justify-between overflow-y-auto">
           <div>
             <div className="flex justify-between items-center mb-6">
@@ -162,7 +162,7 @@ const Cart: React.FC<CartProps> = ({ cartItems = [], onClose, onUpdateCart, onPu
           </div>
         </div>
 
-        {/* Right Side */}
+        {/* Lado direito */}
         <div className="w-1/4 bg-gray-100 p-6 flex flex-col justify-between text-gray-800">
           <div>
             <h2 className="text-xl font-bold mb-4">Resumo do pedido</h2>
