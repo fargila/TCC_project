@@ -1,107 +1,156 @@
 import { MdSecurity } from 'react-icons/md';
 import { FaPlane, FaHeadset, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
-function Footer() {
+const Footer = () => {
   return (
-    <footer className='flex flex-col justify-center h-auto bottom-0 mb-4'>
-      <div className='w-full bg-gray-700 text-white py-8 flex justify-between
-      border-t-4 border-blue-800 ring-2 ring-black'>
-        <div className='flex pl-10 text-xl items-center'><MdSecurity/><p className='
-        pl-2 font-medium'>100% <i>seguro</i></p></div>
-        <div className='flex  text-xl items-center'><FaPlane/><p className='
-        pl-2 font-medium'>Para qualquer lugar nacionalmente</p></div>
-        <div className='flex pr-10 text-xl items-center'><FaHeadset/><p className='
-        pl-2 font-medium'>Suporte automatizado por IA</p></div>
+    <footer className="bg-white mt-auto">
+      {/* Top Section - Features */}
+      <div className="w-full bg-gray-700 text-white py-8 flex flex-col md:flex-row justify-between 
+      items-center border-t-4 border-white ring-2 ring-black px-4">
+        <div className="flex items-center mb-4 md:mb-0 md:pl-10">
+          <MdSecurity className="text-2xl" />
+          <p className="pl-2 font-medium">100% <span className="italic">seguro</span></p>
+        </div>
+        
+        <div className="flex items-center mb-4 md:mb-0">
+          <FaPlane className="text-2xl" />
+          <p className="pl-2 font-medium">Para qualquer lugar nacionalmente</p>
+        </div>
+        
+        <div className="flex items-center md:pr-10">
+          <FaHeadset className="text-2xl" />
+          <p className="pl-2 font-medium">Suporte automatizado por IA</p>
+        </div>
       </div>
-      <div className='flex mt-10 justify-between'>
-        <div className='pl-8 text-xl flex flex-col'>
-            <p className='font-bold mb-6'>Social Media</p>
-            <div className='flex w-full flex-col'>
-                <div className='flex py-2'>
-                    <a 
-        href='https://www.instagram.com/_fargila/' 
-        className='
-          border border-black rounded-full text-2xl mr-4 p-2 
-          bg-white hover:bg-pink-50 
-          text-pink-600 hover:text-pink-700 
-          transition-colors duration-200
-          shadow-sm hover:shadow-md
-        '
-      >
-        <FaInstagram/>
-      </a>
-      
-      <a 
-        href='https://www.linkedin.com/in/%C3%A1tila-fran%C3%A7a-8066a0249/' 
-        className='
-          border border-black rounded-full text-2xl p-2 
-          bg-white hover:bg-blue-50 
-          text-blue-600 hover:text-blue-700 
-          transition-colors duration-200
-          shadow-sm hover:shadow-md
-        '
-      >
-        <FaLinkedinIn/>
-      </a>
-                </div>
-            </div>
-        </div>
-        <div className=' text-xl'>
-            <p className='font-bold mb-6'>Team members</p>
-            <p className='py-2'>Átila França do Nascimento</p>
-            <p className='py-2'>Cauê Cassiano dos Santos</p>
-            <p className='py-2'>Arthur do Amaral da Silva</p>
-        </div>
-        <div className=' text-xl'>
-            <p className='font-bold mb-6'>About Us</p>
+
+      {/* Bottom Section - Links */}
+      <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* Social Media */}
+        <div className="text-center md:text-left">
+          <h3 className="font-bold text-xl mb-6">Social Media</h3>
+          <div className="flex justify-center md:justify-start space-x-4">
             <a 
-              href='https://www.unipe.edu.br/' 
-              className='
-                py-2 text-gray-700 hover:text-blue-600 
+              href="https://www.instagram.com/_fargila/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                border border-black rounded-full text-2xl p-2 
+                bg-white hover:bg-pink-50 
+                text-pink-600 hover:text-pink-700 
                 transition-colors duration-200
-                hover:underline underline-offset-4
-              '>Our institution
+                shadow-sm hover:shadow-md
+                flex items-center justify-center
+                mr-4
+              "
+              aria-label="Instagram"
+            >
+              <FaInstagram />
             </a>
-            <p className='py-2'>About this project (in progress)</p>
-        </div>
-        <div className='pr-8 text-xl'>
-            <p className='font-bold mb-6'>Useful Links</p>
+            
             <a 
-            href='https://blog.magezon.com/website-shopping-cart-page-ultimate-guide-ecm/' 
-            className='
-              py-2 text-gray-700 hover:text-blue-600 
-              transition-colors duration-200
-              hover:underline underline-offset-4
-              block
-            '
-          >
-            Cart's ref.
-          </a>
-          
-          <a 
-            href='https://cssauthor.com/e-commerce-template-psd-for-online-bookstore/' 
-            className='
-              py-2 text-gray-700 hover:text-blue-600 
-              transition-colors duration-200
-              hover:underline underline-offset-4
-              block
-            '
-          >
-            Catalog's ref.
-          </a>
-          
-          <a 
-            href='https://nerdcave.com/tailwind-cheat-sheet' 
-            className='
-              py-2 text-gray-700 hover:text-blue-600 
-              transition-colors duration-200
-              hover:underline underline-offset-4
-              block
-            '
-          >
-            TailwindCSS styles sheets
-          </a>
+              href="https://www.linkedin.com/in/%C3%A1tila-fran%C3%A7a-8066a0249/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                border border-black rounded-full text-2xl p-2 
+                bg-white hover:bg-blue-50 
+                text-blue-600 hover:text-blue-700 
+                transition-colors duration-200
+                shadow-sm hover:shadow-md
+                flex items-center justify-center
+              "
+              aria-label="LinkedIn"
+            >
+              <FaLinkedinIn />
+            </a>
+          </div>
         </div>
+
+        {/* Team Members */}
+        <div className="text-center md:text-left">
+          <h3 className="font-bold text-xl mb-6">Integrantes</h3>
+          <ul className="space-y-2">
+            <li>Átila França do Nascimento</li>
+            <li>Cauê Cassiano dos Santos</li>
+            <li>Arthur do Amaral da Silva</li>
+          </ul>
+        </div>
+
+        {/* About Us */}
+        <div className="text-center md:text-left">
+          <h3 className="font-bold text-xl mb-6">Sobre nós</h3>
+          <ul className="space-y-2">
+            <li>
+              <a 
+                href="https://www.unipe.edu.br/" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  text-gray-700 hover:text-blue-600 
+                  transition-colors duration-200
+                  hover:underline underline-offset-4
+                "
+              >
+                Our institution
+              </a>
+            </li>
+            <li>About this project (in progress)</li>
+          </ul>
+        </div>
+
+        {/* Useful Links */}
+        <div className="text-center md:text-left">
+          <h3 className="font-bold text-xl mb-6">Links úteis</h3>
+          <ul className="space-y-2">
+            <li>
+              <a
+                href="https://blog.magezon.com/website-shopping-cart-page-ultimate-guide-ecm/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  text-gray-700 hover:text-blue-600 
+                  transition-colors duration-200
+                  hover:underline underline-offset-4
+                "
+              >
+                Cart's ref.
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://cssauthor.com/e-commerce-template-psd-for-online-bookstore/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  text-gray-700 hover:text-blue-600 
+                  transition-colors duration-200
+                  hover:underline underline-offset-4
+                "
+              >
+                Catalog's ref.
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://nerdcave.com/tailwind-cheat-sheet"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  text-gray-700 hover:text-blue-600 
+                  transition-colors duration-200
+                  hover:underline underline-offset-4
+                "
+              >
+                TailwindCSS styles sheets
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Copyright */}
+      <div className="text-center py-4 border-t border-gray-200 text-gray-600">
+        <p>&copy; {new Date().getFullYear()} Projeto Bookstore E-commerce. Todos os direitos reservados.</p>
       </div>
     </footer>
   )
