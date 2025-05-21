@@ -125,7 +125,7 @@ export const Catalog: React.FC<CatalogProps> = ({
           </div>
 
           {loading ? (
-            <div className="text-center py-10">Loading books...</div>
+            <div className="text-center py-10">Carregando livros...</div>
           ) : (
             <Items
               books={currentBooks}
