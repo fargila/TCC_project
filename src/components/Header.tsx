@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
             >
               <FaArrowLeft size={20} />
-              <span className="text-lg">Voltar ao Catálogo</span>
+              <span className="text-lg">Cancelar compra e voltar ao Catálogo</span>
             </button>
           ) : (
             <div className="flex h-1/2 w-1/2 relative">
